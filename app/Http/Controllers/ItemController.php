@@ -28,10 +28,11 @@ class ItemController extends Controller
     public function store(AddItemRequest $request)
     {
         try {
-            $item = Item::create($request->only([
-                'description'
-            ]));
-            return $this->jsonResponse(201,'Item has been created',$item);
+            $item = Item::create([
+                'description' => $request->description,
+                'status' => 'incomplete'
+            ]);
+            return $this->jsonResponse(201,'Item has been created',new \App\Http\Resources\Item($item));
         }catch (\Exception $exception){
             return $this->jsonResponse(500,'Something went wrong');
         }
@@ -43,10 +44,10 @@ class ItemController extends Controller
     {
         try {
             $item = Item::findOrFail($id);
-            $item->update($request->only([
-                'status'
-            ]));
-            return $this->jsonResponse(201,'The item updated successfully',$item);
+            $item->update([
+                'status' => 'complete'
+            ]);
+            return $this->jsonResponse(201,'The item updated successfully',new \App\Http\Resources\Item($item));
         }catch (\Exception $exception){
             return $this->jsonResponse(500,'Something went wrong',$exception->getMessage());
         }
